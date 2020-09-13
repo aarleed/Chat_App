@@ -22,7 +22,7 @@ def login():
 		if "user" in session:
 			return redirect(url_for("user"))
 
-		return render_template("test.html")
+		return render_template("chat.html")
 
 # ***********************************************************
 # change content to fit our goal. Just to test session feature
