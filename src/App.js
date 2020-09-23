@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 // import Navbar from './components/Navbar'
 import { Route, BrowserRouter, Switch } from 'react-router-dom'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import Main from './components/Main'
 import '../src/index.css'
-import socketIOClient from "socket.io-client";
+import ClientComponent from "./components/ClientComponent"
 
 
 const ENDPOINT = "http://127.0.0.1:4001";
@@ -13,14 +13,7 @@ const ENDPOINT = "http://127.0.0.1:4001";
 
 class App extends Component {
   render() {
-    const [response, setResponse] = React.useState("");
-    useEffect(() => {
-      const socket = socketIOClient(ENDPOINT);
-      socket.on("FromAPI", data => {
-        setResponse(data);
-      });
-    }, []);
-
+    const [loadClient, setLoadClient] = useState(true);
     return (
       <BrowserRouter>
         <div className="App">
