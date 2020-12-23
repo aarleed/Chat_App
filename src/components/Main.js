@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Grommet, Box, TextInput ,Button, Heading, Grid} from 'grommet';
 
-
+// connect to database?
 const DUMMY_DATA = [
     {
         senderId: 'Aaron',
@@ -24,16 +24,41 @@ const DUMMY_DATA = [
         text: 'Hi'
     },
     
+    
 ]
+
+let endPoint = "http://localhost:5000";
+let socket = window.io.connect(`${endPoint}`);
+
 
 // class main extends React.Component {
 
 //     render(){
 const Main = () => {
     const [message, setMessage] = React.useState('');
+    const [user, setUser] = React.useState('Aaron');
+    const [messages, setMessages] = React.useState(DUMMY_DATA);
 
-    const handleSubmission = async () => {
-        console.log(JSON.stringify({ message }));
+    const handleSubmission = async (e) => {
+        e.preventDefault();
+        
+        socket.emit("message", message);
+        setMessage((message) => "");
+    }
+
+    useEffect(() => {
+        socket.on("message", msg => {
+            setMessages([...messages, {senderId: user, text: msg}]);
+            // console.log(JSON.stringify({messages}));
+        }); 
+
+        return () => {
+            socket.off("message");
+        };
+    }, [messages.length]);
+
+    const tempChange = () => {
+        console.log("change id");
     }
     
     
@@ -74,6 +99,15 @@ const Main = () => {
                 round="small" 
                 border={{ color: 'white', size: 'large' }}>
                     <Heading margin="medium" alignSelf="start" level='2'>List of Chats</Heading>
+                    <TextInput
+                            style = {{width:'100%'}}
+                            placeholder = {user}
+                            size = "small"
+                            value={user}
+                            onChange={event => {setUser(event.target.value)}}
+                        />
+                        <Button primary label="tempChangeUser" color = "#098589" onClick={tempChange} />
+
 
                 </Box> {/* end of list of chats */}
                 <Box
@@ -86,7 +120,7 @@ const Main = () => {
                 round = "small"
                 > 
                     <Box className="message-list" height="medium">
-                    {DUMMY_DATA.map((message, index) => {
+                    {messages.map((message, index) => {
                         return(
                             // use unique key instead of index later on
                             <Box key={index} className="message" pad="small" width="small">
@@ -104,7 +138,7 @@ const Main = () => {
                             placeholder="message"
                             size = "small"
                             value={message}
-                            onChange={event => setMessage(event.target.value)}
+                            onChange={event => {setMessage(event.target.value)}}
                         />
                         <Button primary label="Send" color = "#098589" onClick={handleSubmission} />
 

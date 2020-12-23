@@ -13,7 +13,7 @@ const ENDPOINT = "http://127.0.0.1:4001";
 
 class App extends Component {
   render() {
-    const [loadClient, setLoadClient] = useState(true);
+    // const [loadClient, setLoadClient] = useState(true);
     return (
       <BrowserRouter>
         <div className="App">

@@ -1,10 +1,14 @@
 from flask import Flask, redirect, url_for, render_template, request, session
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 
-app = Flask("Login")
+# app = Flask("Login")
+app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "40832hfondnfonfr48934r9"
-socketIO = SocketIO(app)
+socketIO = SocketIO(app, cors_allowed_origins = "*", async_mode='threading')
+
+app.host = 'localhost'
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/login", methods = ["POST", "GET"])
 def login():
@@ -45,11 +49,17 @@ def logout():
 	
 	return redirect(url_for("login"))
 
-@socketio.on("message")
+@socketIO.on("message")
 def handle_message_client(json):
 	print(f"[S]: Received message '{json}' from client")
+	send(json, broadcast = True)
 
-	socketio.emit("response", json)
+	socketIO.emit("response", json)
+
+@socketIO.on('my event')
+def handle(json):
+	print('received: ' + str(json))
 
 if __name__ == "__main__":
-	socketio.run(app, debug = True)
+	socketIO.run(app, debug = True)
+	# app.run()
