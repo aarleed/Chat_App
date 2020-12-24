@@ -1,14 +1,29 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Grommet, Box, TextInput, Select, FormField, Button, Heading } from 'grommet';
+import { useHistory } from 'react-router-dom';
 
-const SignUp = () => {
+const SignUp = (state) => {
     const [gender, setGender] = React.useState('other');
     const [password, setPassword] = React.useState('');
     const [email, setEmail] = React.useState('');
+    const history = useHistory();
 
     const handleSubmission = () => {
-        alert(`${gender} ${password} ${email}`)
+        // alert(`${gender} ${password} ${email}`)
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept':'application/json' },
+            body: JSON.stringify({ name: email, pass: password, gender: gender })
+        };
+        fetch('/signup', requestOptions).then(res => res.json()).then(data => {
+            history.push(`/login`)
+          });
     }
+    
+    
+    useEffect(() => {
+        console.log(state)
+      }, []);
 
     return (
         <Grommet>

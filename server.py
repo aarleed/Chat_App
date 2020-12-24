@@ -1,5 +1,7 @@
-from flask import Flask, redirect, url_for, render_template, request, session
+from flask import Flask, redirect, url_for, render_template, request, session, flash
+from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, send
+import time
 
 # app = Flask("Login")
 app = Flask(__name__)
@@ -10,11 +12,31 @@ socketIO = SocketIO(app, cors_allowed_origins = "*", async_mode='threading')
 app.host = 'localhost'
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route("/login", methods = ["POST", "GET"])
+@app.route('/time')
+def get_current_time():
+	''' Test time'''
+	for item in session:
+		print(item, session[item])
+	return {'time': time.time()}
+
+@app.route('/signup', methods=['GET', 'POST'])
+def add_user():
+	session.permanent = True
+	user_json = request.get_json()
+	session["user"] = {"name": user_json['name'], "pass": user_json['pass']}
+	
+	return {'hi': str(user)}
+
+@app.route('/', defaults = {'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+	''' default landing page'''
+	return 'Path: %s' % path
+
+@app.route("/login1", methods = ["POST", "GET"])
 def login():
 
 	if request.method == "POST":
-
 		session.permanent = True
 		user = request.form["nm"] # form 'name' attribute
 
@@ -25,8 +47,27 @@ def login():
 
 		if "user" in session:
 			return redirect(url_for("user"))
+		return redirect(url_for("login"))
+		# return render_template("chat.html")
 
-		return render_template("chat.html")
+@app.route('/loggedIn', methods=['POST', "GET"])
+def loggedIn():
+	print(session.get("logged_in", False), 'owkign')
+	return {"loggedIn": session.get("logged_in", False)}
+
+@app.route('/login', methods=['POST', "GET"])
+def do_admin_login():
+	# session.pop("user", None)
+	data = request.json
+	# data["name"]
+	
+	if "user" in session and data['pass'] == session["user"]['pass']:
+	# if request.form['password'] == 'password' and request.form['username'] == 'admin':
+		session['logged_in'] = True
+		return {"session_id" : session["user"]}
+	else:
+		# flash('wrong password!')
+		return {"session_id" : False}
 
 # ***********************************************************
 # change content to fit our goal. Just to test session feature
@@ -39,15 +80,25 @@ def user():
 		return f"<h1>Welcome to the site {user}</h1>"
 
 	else:
-
+		# return render_template('index.html')
 		return redirect(url_for("login"))
 # ***********************************************************
 
+@app.route("/main")
+def chat():
+	if "user" in session:
+		return {"redirect": False}
+	else:
+		return {"redirect": True}
+
 @app.route("/logout")
 def logout():
-	session.pop("user", None)
+	print('cl0')
+	session.clear()
+	return {}
+	# session.pop("user", None)
 	
-	return redirect(url_for("login"))
+	# return redirect(url_for("login"))
 
 @socketIO.on("message")
 def handle_message_client(json):

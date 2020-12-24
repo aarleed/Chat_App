@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { Grommet, Box, TextInput ,Button, Heading, Grid} from 'grommet';
+import { useHistory } from 'react-router-dom';
 
 // connect to database?
 const DUMMY_DATA = [
@@ -34,10 +35,17 @@ let socket = window.io.connect(`${endPoint}`);
 // class main extends React.Component {
 
 //     render(){
-const Main = () => {
+const Main = (state) => {
     const [message, setMessage] = React.useState('');
     const [user, setUser] = React.useState('Aaron');
     const [messages, setMessages] = React.useState(DUMMY_DATA);
+    const history = useHistory();
+
+    const logout = () => {
+        fetch('/logout').then(res => res.json()).then(data => {
+            history.push(`/login`)
+        });
+    }
 
     const handleSubmission = async (e) => {
         e.preventDefault();
@@ -47,10 +55,19 @@ const Main = () => {
     }
 
     useEffect(() => {
+        console.log(state.props);
         socket.on("message", msg => {
             setMessages([...messages, {senderId: user, text: msg}]);
             // console.log(JSON.stringify({messages}));
         }); 
+
+        fetch("/main").then(response => response.json()).then(data => {
+            if (data.redirect !== false) {
+                
+            } else {
+
+            }
+          });
 
         return () => {
             socket.off("message");
@@ -77,15 +94,16 @@ const Main = () => {
 
                 >
                 <Box
-                direction="row"
+                direction="column"
                 gridArea = "header"
                 align="center"
                 justify="around"
                 fill="horizontal"
                 pad={{ right: "xsmall", left: "xsmall" }}
                 >
-                <Heading margin="medium" alignSelf="start" level='1' color="white">Chats</Heading>
+                <Heading margin="medium" alignSelf="center" level='1' color="white">Chats</Heading>
                 
+                <Button primary label="Logout" color = "#098589" onClick={logout} />
                 </Box> {/* end header box */}
                 <Box
                 background="white" 

@@ -12,7 +12,15 @@ const ENDPOINT = "http://127.0.0.1:4001";
 // reference https://www.valentinog.com/blog/socket-react/
 
 class App extends Component {
+  state = {
+    email: 'ag',
+    password: '',
+    gender: '',
+    loggedIn: false
+  };
+
   render() {
+    
     // const [loadClient, setLoadClient] = useState(true);
     return (
       <BrowserRouter>
@@ -21,8 +29,15 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={Login}/>
             <Route exact path='/signup' component={SignUp}/>
-            <Route exact path='/login' component={Login}/>
-            <Route exact path='/main' component={Main}/>
+            <Route exact path='/login' render={(state) => (
+              <Login props={this.state} />
+            )}/>
+            <Route exact path='/main' render={(props) => (
+              <Main {...props} props={this.state} />
+              // <Main {...props} props={this.state} loggedIn={this.state.loggedIn} />
+            )}/>
+            {/* <Route exact path='/login' component={Login}/> */}
+            {/* <Route exact path='/main' component={Main}/> */}
           </Switch>
         </div>
       </BrowserRouter>

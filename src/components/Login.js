@@ -1,13 +1,55 @@
-import React from 'react';
-// import loftlyTheme from './Theme';
+import React, { useEffect } from 'react';
+
 import { Box, Heading, TextInput, Button, Text, Grommet, Grid} from 'grommet';
-const Login = () => {
+import { Redirect } from 'react-router';
+import { useHistory } from 'react-router-dom';
+
+let endPoint = "http://localhost:5000";
+let socket = window.io.connect(`${endPoint}`);
+
+
+const Login = (state) => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [currentTime, setCurrentTime] = React.useState(0);
+    const history = useHistory();
+
+    fetch('/loggedIn').then(res => res.json()).then(data => {
+        console.log(data.loggedIn)
+        if (data.loggedIn) {
+            return <Redirect to = "/main" />;
+        }
+    });
+
+    useEffect(() => {
+        
+        fetch('/time').then(res => res.json()).then(data => {
+          setCurrentTime(data.time);
+        });
+        console.log(state);
+        state.props.email = "hello";
+        console.log(state.props.email);
+        console.log(state.props.password);
+      }, []);
 
     const handleSubmission = async () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept':'application/json' },
+            body: JSON.stringify({ name: email, pass: password})
+        };
         console.log(JSON.stringify({ email, password }));
-    }
+        fetch("/login", requestOptions).then(response => response.json()).then(data => {
+            if (data.session_id !== false) {
+                history.push(`/main`);
+            } else {
+                alert('login info incorrect');
+            }
+          });
+        // console.log(response.json());
+    };
+    // console.log({loggedIn})
+    
 
     return (
         <Grommet>
@@ -53,6 +95,7 @@ const Login = () => {
                                 placeholder="email"
                                 value={email}
                                 type="email"
+                                name = "username"
                                 onChange={event => setEmail(event.target.value)}
                             />
                         </Box>
@@ -62,6 +105,7 @@ const Login = () => {
                                 placeholder="password"
                                 value={password}
                                 type="password"
+                                name = "password"
                                 onChange={event => setPassword(event.target.value)}
                             />
                         </Box>
@@ -72,6 +116,7 @@ const Login = () => {
                         </Box>
                         <hr />
                         <Text alignSelf="start">Don't have an account? <a href="/signup" >Sign up</a></Text>
+                        <p> current time is {currentTime}</p>
                     </Box> {/* end login box */}
                     <Box
                     gridArea = "main"
