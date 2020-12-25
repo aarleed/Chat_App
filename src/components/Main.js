@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Grommet, Box, TextInput ,Button, Heading, Grid} from 'grommet';
+import { Text, Grommet, Box, TextInput ,Button, Heading, Grid} from 'grommet';
 import { useHistory } from 'react-router-dom';
 import { Redirect } from 'react-router';
 
@@ -54,6 +54,11 @@ const Main = (props) => {
         history.push(`/login`);
     }
 
+    /**
+     * Send message to server, clear text.
+     * Technically don't need async (only need when awaiting)
+     * @param {*} e event object
+     */
     const handleSubmission = async (e) => {
         e.preventDefault();
         
@@ -61,6 +66,9 @@ const Main = (props) => {
         setMessage((message) => "");
     }
 
+    /**
+     * Update messages when message gets added to array.
+     */
     useEffect(() => {
         let mounted = true;
         if (!loggedIn) {
@@ -76,13 +84,13 @@ const Main = (props) => {
         }); 
 
         return () => {
-            socket.off("message");
+            socket.off("message"); // turn off listener
         };
     }, [messages.length]);
 
-    const tempChange = () => {
-        console.log("change id");
-    }
+    // const tempChange = () => {
+    //     console.log("change id");
+    // }
     
     if (!loggedIn) {
         return <Redirect to = "/login"/>
@@ -133,7 +141,7 @@ const Main = (props) => {
                             value={user}
                             onChange={event => {setUser(event.target.value)}}
                         />
-                        <Button primary label="tempChangeUser" color = "#098589" onClick={tempChange} />
+                        {/* <Button primary label="tempChangeUser" color = "#098589" onClick={tempChange} /> */}
 
 
                 </Box> {/* end of list of chats */}
@@ -146,13 +154,14 @@ const Main = (props) => {
                 margin={{ right: "xlarge",top: "small" }} 
                 round = "small"
                 > 
-                    <Box className="message-list" height="medium">
+                    <Box className="message-list" height="medium" >
                     {messages.map((message, index) => {
                         return(
                             // use unique key instead of index later on
-                            <Box key={index} className="message" pad="small" width="small">
-                                <div className="message-username">{message.senderId}</div>
-                                <div className="message-text">{message.text}</div>
+                            <Box justify="around" key={index} 
+                             overflow = {{vertical: "visible"}} flex = {"grow"} className="message" pad="xsmall" width="small">
+                                <Text className="message-username">{message.senderId}</Text>
+                                <Text className="message-text">{message.text}</Text>
                             </Box>
                         )
                         
@@ -167,7 +176,7 @@ const Main = (props) => {
                             value={message}
                             onChange={event => {setMessage(event.target.value)}}
                         />
-                        <Button primary label="Send" color = "#098589" onClick={handleSubmission} />
+                        <Button margin = {{left: "xsmall"}} primary label="Send" color = "#098589" onClick={handleSubmission} />
 
                     </Box>
                        

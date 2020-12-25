@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, render_template, request, session, flash
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, send
 import time
 
@@ -19,6 +19,7 @@ def get_current_time():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def add_user():
+	''' Add a user to the session '''
 	session.permanent = True
 	user_json = request.get_json()
 	session[ user_json['name'] ] = user_json['pass']
@@ -32,21 +33,21 @@ def catch_all(path):
 	''' default landing page'''
 	return 'Path: %s' % path
 
-@app.route("/login1", methods = ["POST", "GET"])
-def login():
+# @app.route("/login1", methods = ["POST", "GET"])
+# def login():
 
-	if request.method == "POST":
-		session.permanent = True
-		user = request.form["nm"] # form 'name' attribute
+# 	if request.method == "POST":
+# 		session.permanent = True
+# 		user = request.form["nm"] # form 'name' attribute
 
-		session["user"] = user
-		return redirect(url_for("user"))
+# 		session["user"] = user
+# 		return redirect(url_for("user"))
 
-	else:
+# 	else:
 
-		if "user" in session:
-			return redirect(url_for("user"))
-		return redirect(url_for("login"))
+# 		if "user" in session:
+# 			return redirect(url_for("user"))
+# 		return redirect(url_for("login"))
 		# return render_template("chat.html")
 
 # @app.route('/loggedIn', methods=['POST', "GET"])
@@ -55,7 +56,8 @@ def login():
 # 	return {"loggedIn": session.get("logged_in", False)}
 
 @app.route('/login', methods=['POST', "GET"])
-def do_admin_login():
+def do_login():
+	''' Login a user. '''
 	data = request.json
 	print(session)
 	
@@ -95,9 +97,9 @@ def logout():
 @socketIO.on("message")
 def handle_message_client(json):
 	print(f"[S]: Received message '{json}' from client")
-	send(json, broadcast = True)
+	# send(json, broadcast = True)
 
-	# socketIO.emit("response", json)
+	socketIO.emit("message", json)
 
 @socketIO.on('my event')
 def handle(json):
@@ -105,4 +107,3 @@ def handle(json):
 
 if __name__ == "__main__":
 	socketIO.run(app, debug = True)
-	# app.run()

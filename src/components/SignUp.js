@@ -8,6 +8,11 @@ const SignUp = (props) => {
     const [email, setEmail] = React.useState('');
     const history = useHistory();
 
+    /**
+     * Send a POST request to the server, and the
+     * redirect to login.
+     * Server adds user.
+     */
     const handleSubmission = () => {
         // alert(`${gender} ${password} ${email}`)
         const requestOptions = {
@@ -58,9 +63,6 @@ const SignUp = (props) => {
                     </Box>
                     <br />
                     
-                    {/* <Box>
-                        <Button onClick={handleSubmission} style={{ color : "#098589" }} primary label="Submit" />
-                    </Box> */}
                     <Box >
                         <Button primary label="Sign Up" color = "#098589" onClick={handleSubmission} />
                     </Box>
