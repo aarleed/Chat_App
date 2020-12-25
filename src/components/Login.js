@@ -21,16 +21,16 @@ const Login = (props) => {
         let mounted = true;
         if (loggedIn) {
             mounted = false;
+            return () => {
+                return mounted; // cleanup fct
+            }
         }
         fetch('/time').then(res => res.json()).then(data => {
-            if (mounted) {
-                setCurrentTime(data.time);
-            }
+            setCurrentTime(data.time);
+            
         });
         console.log(props);
-        return () => {
-            return mounted; // cleanup fct
-        }
+        
       }, []);
     
     if (loggedIn) {
@@ -125,7 +125,7 @@ const Login = (props) => {
                         </Box>
                         <hr />
                         <Text alignSelf="start">Don't have an account? <a href="/signup" >Sign up</a></Text>
-                        <p> current time is {currentTime}</p>
+                        <p> You visited at {currentTime}</p>
                     </Box> {/* end login box */}
                     <Box
                     gridArea = "main"

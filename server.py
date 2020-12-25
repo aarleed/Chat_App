@@ -15,15 +15,14 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route('/time')
 def get_current_time():
 	''' Test time'''
-	for item in session:
-		print(item, session[item])
-	return {'time': time.time()}
+	return {'time': time.asctime( time.localtime(time.time()) )}
 
 @app.route('/signup', methods=['GET', 'POST'])
 def add_user():
 	session.permanent = True
 	user_json = request.get_json()
-	session["user"] = {"name": user_json['name'], "pass": user_json['pass']}
+	session[ user_json['name'] ] = user_json['pass']
+	# session["user"] = {"name": user_json['name'], "pass": user_json['pass']}
 	
 	return {'hi': str(user)}
 
@@ -50,23 +49,20 @@ def login():
 		return redirect(url_for("login"))
 		# return render_template("chat.html")
 
-@app.route('/loggedIn', methods=['POST', "GET"])
-def loggedIn():
-	print(session.get("logged_in", False), 'owkign')
-	return {"loggedIn": session.get("logged_in", False)}
+# @app.route('/loggedIn', methods=['POST', "GET"])
+# def loggedIn():
+# 	print(session.get("logged_in", False), 'owkign')
+# 	return {"loggedIn": session.get("logged_in", False)}
 
 @app.route('/login', methods=['POST', "GET"])
 def do_admin_login():
-	# session.pop("user", None)
 	data = request.json
-	# data["name"]
+	print(session)
 	
-	if "user" in session and data['pass'] == session["user"]['pass']:
+	if data['name'] in session and data['pass'] == session[data['name']]:
 	# if request.form['password'] == 'password' and request.form['username'] == 'admin':
-		session['logged_in'] = True
 		return {"session_id" : session["user"]}
 	else:
-		# flash('wrong password!')
 		return {"session_id" : False}
 
 # ***********************************************************
@@ -93,12 +89,8 @@ def chat():
 
 @app.route("/logout")
 def logout():
-	# print('cl0')
-	# session.clear()
 	return {}
-	# session.pop("user", None)
 	
-	# return redirect(url_for("login"))
 
 @socketIO.on("message")
 def handle_message_client(json):
