@@ -1,5 +1,13 @@
 # To install necessary modules do "npm install" (I think)
 
+# Run project:
+npm start 
+
+Use whatever works for you:
+python server.py
+python3 server.py
+py server.py
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
