@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 # from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, send
+import time_stamp
 import time
 
 # app = Flask("Login")
@@ -96,7 +97,9 @@ def logout():
 
 @socketIO.on("message")
 def handle_message_client(json):
+	json['time'] = time_stamp.getCurrentTimeStamp()
 	print(f"[S]: Received message '{json}' from client")
+	
 	# send(json, broadcast = True)
 
 	socketIO.emit("message", json)

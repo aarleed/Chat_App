@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import { Box, Heading, TextInput, Button, Text, Grommet, Grid} from 'grommet';
 import { Redirect } from 'react-router';
-import { useHistory } from 'react-router-dom';
+import { useHistory, withRouter } from 'react-router-dom';
 
 let endPoint = "http://localhost:5000";
 let socket = window.io.connect(`${endPoint}`);
@@ -140,4 +140,4 @@ const Login = (props) => {
     )
 }
 
-export default Login;
+export default withRouter(Login);

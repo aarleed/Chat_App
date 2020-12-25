@@ -7,23 +7,28 @@ import { Redirect } from 'react-router';
 const DUMMY_DATA = [
     {
         senderId: 'Aaron',
-        text: 'Hey'
+        text: 'Hey',
+        time: "12/25/2020 - 3:03 PM"
     },
     {
         senderId: 'Abhi',
-        text: 'Hi'
+        text: 'Hi',
+        time: "12/25/2020 - 3:03 PM"
     },
     {
         senderId: 'Abhi',
-        text: 'Hi'
+        text: 'Hi',
+        time: "12/25/2020 - 3:03 PM"
     },
     {
         senderId: 'Abhi',
-        text: 'Hi'
+        text: 'Hi',
+        time: "12/25/2020 - 3:03 PM"
     },
     {
         senderId: 'Abhi',
-        text: 'Hi'
+        text: 'Hi',
+        time: "12/25/2020 - 3:03 PM"
     },
     
     
@@ -79,7 +84,7 @@ const Main = (props) => {
         }
         console.log(props.state);
         socket.on("message", msg => {
-            setMessages([...messages, {senderId: msg.user, text: msg.msg}]);
+            setMessages([...messages, {senderId: msg.user, text: msg.msg, time: msg.time}]);
             // console.log(JSON.stringify({messages}));
         }); 
 
@@ -160,7 +165,7 @@ const Main = (props) => {
                             // use unique key instead of index later on
                             <Box justify="around" key={index} 
                              overflow = {{vertical: "visible"}} flex = {"grow"} className="message" pad="xsmall" width="small">
-                                <Text className="message-username">{message.senderId}</Text>
+                                <Text className="message-username">{message.senderId}  {message.time}</Text>
                                 <Text className="message-text">{message.text}</Text>
                             </Box>
                         )

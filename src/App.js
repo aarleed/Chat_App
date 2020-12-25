@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 // import Navbar from './components/Navbar'
-import { Route, BrowserRouter, Switch } from 'react-router-dom'
+import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import Main from './components/Main'
@@ -12,8 +12,8 @@ const ENDPOINT = "http://127.0.0.1:4001";
 // reference https://www.valentinog.com/blog/socket-react/
 
 class App extends Component {
-  constructor() {
-      super();
+  constructor(props) {
+      super(props);
       this.handleSignIn = this.handleSignIn.bind(this); // pass ref to fct to mutate in child
       this.handleLogin = this.handleLogin.bind(this);
       this.handleLogout = this.handleLogout.bind(this);
@@ -62,7 +62,7 @@ class App extends Component {
         <div className="App">
           {/* <Navbar /> */}
           <Switch>
-            <Route exact path='/' component={Login}/>
+            <Redirect exact from="/" to="/login" />
             <Route exact path='/signup' render={() => (
               <SignUp handleSignIn = {this.handleSignIn}/>
             )}/>

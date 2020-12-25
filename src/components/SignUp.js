@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import { Grommet, Box, TextInput, Select, FormField, Button, Heading } from 'grommet';
-import { useHistory } from 'react-router-dom';
+import { useHistory, withRouter } from 'react-router-dom';
 
 const SignUp = (props) => {
     const [gender, setGender] = React.useState('other');
@@ -72,4 +72,4 @@ const SignUp = (props) => {
     );
 }
 
-export default SignUp;
+export default withRouter(SignUp);

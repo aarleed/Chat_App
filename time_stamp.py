@@ -12,7 +12,7 @@ def getCurrentTime():
 	current_minute = datetime.datetime.now().minute
 
 	if current_minute < 10:
-		current_minute = int(f"0{current_minute}")
+		current_minute = (f"0{current_minute}")
 
 
 	return f"{current_hour}:{current_minute} AM" if current_hour <= 12 else f"{current_hour % 12}:{current_minute} PM"
