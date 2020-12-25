@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { Grommet, Box, TextInput ,Button, Heading, Grid} from 'grommet';
 import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router';
 
 // connect to database?
 const DUMMY_DATA = [
@@ -35,16 +36,22 @@ let socket = window.io.connect(`${endPoint}`);
 // class main extends React.Component {
 
 //     render(){
-const Main = (state) => {
+const Main = (props) => {
     const [message, setMessage] = React.useState('');
-    const [user, setUser] = React.useState('Aaron');
+    const [user, setUser] = React.useState(props.state.email);
     const [messages, setMessages] = React.useState(DUMMY_DATA);
     const history = useHistory();
 
+    // weird typecasting
+    let loggedIn = props.state.loggedIn === true || props.state.loggedIn === "true";
+
+    /**
+     * Logs out current user.
+     */
     const logout = () => {
-        fetch('/logout').then(res => res.json()).then(data => {
-            history.push(`/login`)
-        });
+        props.handleLogout();
+        // localStorage.clear();
+        history.push(`/login`);
     }
 
     const handleSubmission = async (e) => {
@@ -55,19 +62,18 @@ const Main = (state) => {
     }
 
     useEffect(() => {
-        console.log(state.props);
+        let mounted = true;
+        if (!loggedIn) {
+            mounted = false;
+            return () => {
+                return mounted;
+            }
+        }
+        console.log(props.state);
         socket.on("message", msg => {
             setMessages([...messages, {senderId: user, text: msg}]);
             // console.log(JSON.stringify({messages}));
         }); 
-
-        fetch("/main").then(response => response.json()).then(data => {
-            if (data.redirect !== false) {
-                
-            } else {
-
-            }
-          });
 
         return () => {
             socket.off("message");
@@ -78,6 +84,9 @@ const Main = (state) => {
         console.log("change id");
     }
     
+    if (!loggedIn) {
+        return <Redirect to = "/login"/>
+    }
     
     return(
         <Grommet>

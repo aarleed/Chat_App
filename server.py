@@ -93,8 +93,8 @@ def chat():
 
 @app.route("/logout")
 def logout():
-	print('cl0')
-	session.clear()
+	# print('cl0')
+	# session.clear()
 	return {}
 	# session.pop("user", None)
 	

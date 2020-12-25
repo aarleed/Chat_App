@@ -12,32 +12,69 @@ const ENDPOINT = "http://127.0.0.1:4001";
 // reference https://www.valentinog.com/blog/socket-react/
 
 class App extends Component {
+  constructor() {
+      super();
+      this.handleSignIn = this.handleSignIn.bind(this); // pass ref to fct to mutate in child
+      this.handleLogin = this.handleLogin.bind(this);
+      this.handleLogout = this.handleLogout.bind(this);
+  }
+  
   state = {
-    email: 'ag',
-    password: '',
-    gender: '',
-    loggedIn: false
+    email: localStorage.getItem("email") || '',
+    password: localStorage.getItem("password") || '',
+    gender: localStorage.getItem("gender") || '',
+    loggedIn: localStorage.getItem("loggedIn") || false
   };
+  
+  handleSignIn = (data) => {
+    console.log(data)
+    this.setState({email: data.email, password: data.pass, gender: data.gender, loggedIn: false}, () => {
+      console.log(this.state);
+      localStorage.setItem("email", this.state.email);
+      localStorage.setItem("password", this.state.password);
+      localStorage.setItem("gender", this.state.gender);
+      localStorage.setItem("loggedIn", false);
+    });
+    
+  }
+
+  handleLogin = (data) => {
+    this.setState({email: data.name, password: data.pass, loggedIn: data.loggedIn}, () => {
+      console.log(this.state);
+      localStorage.setItem("email", this.state.email);
+      localStorage.setItem("password", this.state.password);
+      localStorage.setItem("loggedIn", this.state.loggedIn);
+    });
+  }
+
+  handleLogout = () => {
+    this.setState({email: '', password: '', loggedIn: false}, () => {
+      localStorage.setItem("email", this.state.email);
+      localStorage.setItem("password", this.state.password);
+      localStorage.setItem("loggedIn", this.state.loggedIn);
+    })
+  }
 
   render() {
     
-    // const [loadClient, setLoadClient] = useState(true);
     return (
       <BrowserRouter>
         <div className="App">
           {/* <Navbar /> */}
           <Switch>
             <Route exact path='/' component={Login}/>
-            <Route exact path='/signup' component={SignUp}/>
-            <Route exact path='/login' render={(state) => (
-              <Login props={this.state} />
+            <Route exact path='/signup' render={() => (
+              <SignUp handleSignIn = {this.handleSignIn}/>
+            )}/>
+            <Route exact path='/login' render={(props) => (
+              <Login {...props} state = {this.state} handleLogin = {this.handleLogin}/>
+
+              // <Login props={this.state} />
             )}/>
             <Route exact path='/main' render={(props) => (
-              <Main {...props} props={this.state} />
+              <Main {...props} state={this.state} handleLogout = {this.handleLogout}/>
               // <Main {...props} props={this.state} loggedIn={this.state.loggedIn} />
             )}/>
-            {/* <Route exact path='/login' component={Login}/> */}
-            {/* <Route exact path='/main' component={Main}/> */}
           </Switch>
         </div>
       </BrowserRouter>

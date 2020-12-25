@@ -8,30 +8,38 @@ let endPoint = "http://localhost:5000";
 let socket = window.io.connect(`${endPoint}`);
 
 
-const Login = (state) => {
+const Login = (props) => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [currentTime, setCurrentTime] = React.useState(0);
     const history = useHistory();
 
-    fetch('/loggedIn').then(res => res.json()).then(data => {
-        console.log(data.loggedIn)
-        if (data.loggedIn) {
-            return <Redirect to = "/main" />;
-        }
-    });
+    // weird typecasting
+    let loggedIn = props.state.loggedIn && props.state.loggedIn !== 'false';
 
     useEffect(() => {
-        
+        let mounted = true;
+        if (loggedIn) {
+            mounted = false;
+        }
         fetch('/time').then(res => res.json()).then(data => {
-          setCurrentTime(data.time);
+            if (mounted) {
+                setCurrentTime(data.time);
+            }
         });
-        console.log(state);
-        state.props.email = "hello";
-        console.log(state.props.email);
-        console.log(state.props.password);
+        console.log(props);
+        return () => {
+            return mounted; // cleanup fct
+        }
       }, []);
+    
+    if (loggedIn) {
+        return <Redirect to = "/main" />
+    }
 
+    /**
+     * Send post request to server to log in.
+     */
     const handleSubmission = async () => {
         const requestOptions = {
             method: 'POST',
@@ -41,14 +49,15 @@ const Login = (state) => {
         console.log(JSON.stringify({ email, password }));
         fetch("/login", requestOptions).then(response => response.json()).then(data => {
             if (data.session_id !== false) {
+                props.handleLogin({ name: email, pass: password, loggedIn: true});
                 history.push(`/main`);
             } else {
                 alert('login info incorrect');
             }
           });
-        // console.log(response.json());
+
+        
     };
-    // console.log({loggedIn})
     
 
     return (

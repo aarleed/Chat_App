@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { Grommet, Box, TextInput, Select, FormField, Button, Heading } from 'grommet';
 import { useHistory } from 'react-router-dom';
 
-const SignUp = (state) => {
+const SignUp = (props) => {
     const [gender, setGender] = React.useState('other');
     const [password, setPassword] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -15,6 +15,8 @@ const SignUp = (state) => {
             headers: { 'Content-Type': 'application/json', 'Accept':'application/json' },
             body: JSON.stringify({ name: email, pass: password, gender: gender })
         };
+        props.handleSignIn({ email: email, pass: password, gender: gender });
+        // console.log(props);
         fetch('/signup', requestOptions).then(res => res.json()).then(data => {
             history.push(`/login`)
           });
@@ -22,7 +24,7 @@ const SignUp = (state) => {
     
     
     useEffect(() => {
-        console.log(state)
+        // console.log(props)
       }, []);
 
     return (
