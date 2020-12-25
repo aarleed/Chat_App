@@ -97,7 +97,7 @@ def handle_message_client(json):
 	print(f"[S]: Received message '{json}' from client")
 	send(json, broadcast = True)
 
-	socketIO.emit("response", json)
+	# socketIO.emit("response", json)
 
 @socketIO.on('my event')
 def handle(json):

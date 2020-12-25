@@ -57,7 +57,7 @@ const Main = (props) => {
     const handleSubmission = async (e) => {
         e.preventDefault();
         
-        socket.emit("message", message);
+        socket.emit("message", {user: user, msg: message}); // message
         setMessage((message) => "");
     }
 
@@ -71,7 +71,7 @@ const Main = (props) => {
         }
         console.log(props.state);
         socket.on("message", msg => {
-            setMessages([...messages, {senderId: user, text: msg}]);
+            setMessages([...messages, {senderId: msg.user, text: msg.msg}]);
             // console.log(JSON.stringify({messages}));
         }); 
 
