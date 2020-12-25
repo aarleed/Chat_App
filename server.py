@@ -61,7 +61,7 @@ def do_admin_login():
 	
 	if data['name'] in session and data['pass'] == session[data['name']]:
 	# if request.form['password'] == 'password' and request.form['username'] == 'admin':
-		return {"session_id" : session["user"]}
+		return {"session_id" : session[data['name']]}
 	else:
 		return {"session_id" : False}
 
