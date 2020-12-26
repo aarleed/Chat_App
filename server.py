@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 # from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, send
+from werkzeug.security import generate_password_hash, check_password_hash
 import time_stamp
 import time
 
@@ -23,7 +24,7 @@ def add_user():
 	''' Add a user to the session '''
 	session.permanent = True
 	user_json = request.get_json()
-	session[ user_json['name'] ] = user_json['pass']
+	session[ user_json['name'] ] = generate_password_hash(user_json['pass'])
 	# session["user"] = {"name": user_json['name'], "pass": user_json['pass']}
 	
 	return {'hi': str(user)}
@@ -61,8 +62,8 @@ def do_login():
 	''' Login a user. '''
 	data = request.json
 	print(session)
-	
-	if data['name'] in session and data['pass'] == session[data['name']]:
+	# data['pass'] == session[data['name']]
+	if data['name'] in session and check_password_hash(session[data['name']], data['pass']):
 	# if request.form['password'] == 'password' and request.form['username'] == 'admin':
 		return {"session_id" : session[data['name']]}
 	else:
